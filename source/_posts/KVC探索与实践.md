@@ -7,53 +7,64 @@ date: 2017-05-23 17:41:56
 
 使用KVC你可以做到以下一些操作：
 
-##KVC基础（Key-Value Coding Fundamental）
-###访问对象属性（Accessing Object Properties）
+<br>
+### KVC基础（Key-Value Coding Fundamental）
+
+-------
+
+#### 访问对象属性（Accessing Object Properties）
 * 获取值可以用以下方法:
 
-    ```
+    ```objc
     - (id)valueForKey:(NSString *)key;
     - (id)valueForKeyPath:(NSString *)keyPath;
     - (NSDictionary<NSString *, id> *)dictionaryWithValuesForKeys:(NSArray<NSString *> *)keys;
     ```
 * 设置值用以下方法:
 
- ```
+ ```objc
 - (void)setValue:(nullable id)value forKey:(NSString *)key;
 - (void)setValue:(nullable id)value forKeyPath:(NSString *)keyPath;
 - (void)setValuesForKeysWithDictionary:(NSDictionary<NSString *, id> *)keyedValues;
 ```
+<br>
+
+<div class="tip">
 **注意：**
- 1. 如果对象没有找到key，会抛出`NSUndefinedKeyException`,可以重写子类的`setValue:forUndefinedKey:`做一些自定义的逻辑判断。
- 2. 如果设置值是nil，会抛出 `NSInvalidArgumentException`，`可以重写setNilValueForKey:`做一些自定义的逻辑判断。
-###访问集合属性
+	<div>1. 如果对象没有找到key，会抛出`NSUndefinedKeyException`,可以重写子类的`setValue:forUndefinedKey:`做一些自定义的逻辑判断。</div>
+	<div>2. 如果设置值是nil，会抛出 `NSInvalidArgumentException`，`可以重写setNilValueForKey:`做一些自定义的逻辑判断。</div>
+</div>
+
+ 
+ <br>
+### 访问集合属性
 返回的值是集合，key对应的属性可以使任何值。涉及的方法如下：
 
 **NSMutableArray**
 
-```
+```objc
 mutableArrayValueForKey: 
 mutableArrayValueForKeyPath:
 ```
 **NSMutableSet**
 
 
-```
+```objc
 mutableSetValueForKey:
 mutableSetValueForKeyPath:
 ```
 
 **NSMutableOrderSet**
 
-```
+```objc
 mutableOrderedSetValueForKey:
 mutableOrderedSetValueForKeyPath:
 ```
-
-###使用集合操作符
+<br>
+### 使用集合操作符
 使用集合操作符，可以对集合属性进行一下计算操作，比如计算平均值，总数等。使用的时候有两种方式
 
-```
+```objc
 // Employee.h
 @property (nonatomic, assign) NSInteger age;
 
@@ -72,7 +83,7 @@ NSNumber *number = [depart valueForKeyPath:@"allEmployees.@sum.age"];
 
 在KVC中使用操作符的格式如下(@count除外)：
 
-![](media/15217728079050/15217758003899.jpg)
+![](KVC探索与实践/1.jpg)
 
 * 左路径 (left key path):指向是集合类型的属性
 * 操作符 (colletion operator): 以'@'开始
@@ -93,10 +104,12 @@ NSNumber *number = [depart valueForKeyPath:@"allEmployees.@sum.age"];
     NSArray *collectedDistinctPayees = [concactArray valueForKeyPath:@"@distinctUnionOfArrays.payee"];
 ```
 
-###非对象的数据
+<br>
+### 非对象的数据
 基本的数据类型如`int`、`float`等，需要转换成`NSNumber`类型，`struct`需要转换成`NSValue`类型（针对Objective-C）
 
-###键值验证（Validating Properties）
+<br>
+### 键值验证（Validating Properties）
 KVC提供了可以检测设置的值的类型是否符合属性类型的要求的方法：
 
 ```
@@ -105,10 +118,11 @@ KVC提供了可以检测设置的值的类型是否符合属性类型的要求�
 ```
 子类可以根据自己的校验逻辑重写这个方法。
 
-###KVC设值和取值的流程
+<br>
+### KVC设值和取值的流程
 
 <br>
-#####通过Getter获取值
+##### 通过Getter获取值
 当调用方法`valueForKey:`时，按照以下流程处理：
 
 1. 按照`get<Key>`, `<key>`, `is<Key>`, `_<key>`的顺序寻找方法，如果寻找到了，跳转到步骤5，否则进行步骤2。
@@ -119,7 +133,7 @@ KVC提供了可以检测设置的值的类型是否符合属性类型的要求�
 6. 触发`valueForUndefinedKey`:方法，抛出异常。
 
 <br>
-#####通过Setter设值
+##### 通过Setter设值
 当调用方法`setValue:forKey:`时，按照以下流程处理：
 
 1. 安装顺序寻找方法 `set<Key>:` ， `_set<Key>`，如果找到了把输入的值当做参数传入其中。
@@ -127,12 +141,12 @@ KVC提供了可以检测设置的值的类型是否符合属性类型的要求�
 3. 触发`valueForUndefinedKey`:方法，抛出异常。
 
 <br>
-#####返回可变数组/Mutable Ordered Sets
+##### 返回可变数组/Mutable Ordered Sets
 当调用方法` mutableArrayValueForKey:`或者` mutableOrderedSetValueForKey: `时，按照以下流程处理：
 
 1. 判断是否实现以下方法
 
-    ```
+    ```objc
     // 这两个方法和 NSMutableArray/NSMutableOrderedSet 的方法 insertObject:atIndex: 和 removeObjectAtIndex: 对应
     insertObject:in<Key>AtIndex:
     removeObjectFrom<Key>AtIndex:
@@ -143,10 +157,10 @@ KVC提供了可以检测设置的值的类型是否符合属性类型的要求�
     ```
       中的一个**插入**和**移除**方法。如果实现了，那么就返回一个代理对象。否则进行步骤2。而对于方法
         
-    ```
-    replaceObjectIn<Key>AtIndex:withObject: 
+    ```objc
+replaceObjectIn<Key>AtIndex:withObject: 
     //或者
-    replace<Key>AtIndexes:with<Key>:
+replace<Key>AtIndexes:with<Key>:
     ```
     可以增强效果。
 2. 寻找 `set<Key>:`方法。
@@ -155,12 +169,12 @@ KVC提供了可以检测设置的值的类型是否符合属性类型的要求�
 
 
 <br>
-#####返回mutableSet
+##### 返回mutableSet
 当调用方法`mutableSetValueForKey:`时，按照以下流程处理：
 
 1. 判断是否实现以下方法
 
-    ```
+    ```objc
     // 这两个方法和  NSMutableSet 的方法  addObject: 和  removeObject: 对应
     add<Key>Object:
     remove<Key>Object:
@@ -171,11 +185,11 @@ KVC提供了可以检测设置的值的类型是否符合属性类型的要求�
     ```
     中的一个**添加**和**移除**方法。如果实现了，那么就返回一个代理对象。否则进行步骤2。而对于方法
  
-    ```
+    ```objc
     intersect<Key>:
     set<Key>:
     ```
-可以增强效果。
+	可以增强效果。
 
 2. 如果响应 `mutableSetValueForKey:`的对象是一个`managed object`（像` CoreData的Managed Object`）,查询将停止。
 3. 寻找 `set<Key>:`方法。
@@ -184,5 +198,6 @@ KVC提供了可以检测设置的值的类型是否符合属性类型的要求�
 
 <br>
 参考资料：
-[Key-Value Coding Programming Guide](https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/KeyValueCoding/SearchImplementation.html#//apple_ref/doc/uid/20000955-CJBBBFFA)
+ 
+ * [Key-Value Coding Programming Guide](https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/KeyValueCoding/SearchImplementation.html#//apple_ref/doc/uid/20000955-CJBBBFFA)
 
