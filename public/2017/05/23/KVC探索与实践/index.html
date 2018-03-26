@@ -1,0 +1,101 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> KVC探索与实践 · Hexo</title><meta name="description" content="KVC探索与实践 - John Doe"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"><link rel="search" type="application/opensearchdescription+xml" href="http://yoursite.com/atom.xml" title="Hexo"></head><body><div class="wrap"><header><a href="/" class="logo-link"><img src="/favicon.png" alt="logo"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">BLOG</a></li><li class="nav-list-item"><a href="/archives/" target="_self" class="nav-list-link">ARCHIVE</a></li><li class="nav-list-item"><a href="http://weibo.com/sunchongsheng" target="_blank" class="nav-list-link">WEIBO</a></li><li class="nav-list-item"><a href="https://github.com/pinggod" target="_blank" class="nav-list-link">GITHUB</a></li><li class="nav-list-item"><a href="/atom.xml" target="_self" class="nav-list-link">RSS</a></li></ul></header><main class="container"><div class="post"><article class="post-block"><h1 class="post-title">KVC探索与实践</h1><div class="post-info">May 23, 2017</div><div class="post-content"><h1 id="KVC探索与实践"><a href="#KVC探索与实践" class="headerlink" title="KVC探索与实践"></a>KVC探索与实践</h1><blockquote>
+<p>KVC通过实现非正式协议<code>NSKeyValueCoding</code>，来实现间接访问和设置对象属性的一种机制。</p>
+</blockquote>
+<p>使用KVC你可以做到以下一些操作：</p>
+<p><br></p>
+<h3 id="KVC基础（Key-Value-Coding-Fundamental）"><a href="#KVC基础（Key-Value-Coding-Fundamental）" class="headerlink" title="KVC基础（Key-Value Coding Fundamental）"></a>KVC基础（Key-Value Coding Fundamental）</h3><hr>
+<h4 id="访问对象属性（Accessing-Object-Properties）"><a href="#访问对象属性（Accessing-Object-Properties）" class="headerlink" title="访问对象属性（Accessing Object Properties）"></a>访问对象属性（Accessing Object Properties）</h4><ul>
+<li><p>获取值可以用以下方法:</p>
+  <figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">id</span>)valueForKey:(<span class="built_in">NSString</span> *)key;</span><br><span class="line">- (<span class="keyword">id</span>)valueForKeyPath:(<span class="built_in">NSString</span> *)keyPath;</span><br><span class="line">- (<span class="built_in">NSDictionary</span>&lt;<span class="built_in">NSString</span> *, <span class="keyword">id</span>&gt; *)dictionaryWithValuesForKeys:(<span class="built_in">NSArray</span>&lt;<span class="built_in">NSString</span> *&gt; *)keys;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>设置值用以下方法:</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)setValue:(<span class="keyword">nullable</span> <span class="keyword">id</span>)value forKey:(<span class="built_in">NSString</span> *)key;</span><br><span class="line">- (<span class="keyword">void</span>)setValue:(<span class="keyword">nullable</span> <span class="keyword">id</span>)value forKeyPath:(<span class="built_in">NSString</span> *)keyPath;</span><br><span class="line">- (<span class="keyword">void</span>)setValuesForKeysWithDictionary:(<span class="built_in">NSDictionary</span>&lt;<span class="built_in">NSString</span> *, <span class="keyword">id</span>&gt; *)keyedValues;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p><br></p>
+<div class="tip"><br><strong>注意：</strong><br>    <div>1. 如果对象没有找到key，会抛出<code>NSUndefinedKeyException</code>,可以重写子类的<code>setValue:forUndefinedKey:</code>做一些自定义的逻辑判断。</div><br>    <div>2. 如果设置值是nil，会抛出 <code>NSInvalidArgumentException</code>，<code>可以重写setNilValueForKey:</code>做一些自定义的逻辑判断。</div><br></div>
+
+
+<p> <br></p>
+<h3 id="访问集合属性"><a href="#访问集合属性" class="headerlink" title="访问集合属性"></a>访问集合属性</h3><p>返回的值是集合，key对应的属性可以使任何值。涉及的方法如下：</p>
+<p><strong>NSMutableArray</strong></p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mutableArrayValueForKey: </span><br><span class="line">mutableArrayValueForKeyPath:</span><br></pre></td></tr></table></figure>
+<p><strong>NSMutableSet</strong></p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mutableSetValueForKey:</span><br><span class="line">mutableSetValueForKeyPath:</span><br></pre></td></tr></table></figure>
+<p><strong>NSMutableOrderSet</strong></p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mutableOrderedSetValueForKey:</span><br><span class="line">mutableOrderedSetValueForKeyPath:</span><br></pre></td></tr></table></figure>
+<p><br></p>
+<h3 id="使用集合操作符"><a href="#使用集合操作符" class="headerlink" title="使用集合操作符"></a>使用集合操作符</h3><p>使用集合操作符，可以对集合属性进行一下计算操作，比如计算平均值，总数等。使用的时候有两种方式</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Employee.h</span></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">assign</span>) <span class="built_in">NSInteger</span> age;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Department.h</span></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>) <span class="built_in">NSArray</span>&lt;Employee *&gt; *allEmployees;</span><br><span class="line"></span><br><span class="line"><span class="comment">// client.m</span></span><br><span class="line">Department *depart = [Department new];</span><br><span class="line"> </span><br><span class="line"><span class="comment">// 第一种方式</span></span><br><span class="line"><span class="built_in">NSNumber</span> *number = [depart.allEmployees valueForKeyPath:<span class="string">@"@sum.age"</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">// 第二种方式</span></span><br><span class="line"><span class="built_in">NSNumber</span> *number = [depart valueForKeyPath:<span class="string">@"allEmployees.@sum.age"</span>];</span><br></pre></td></tr></table></figure>
+<p>在KVC中使用操作符的格式如下(@count除外)：</p>
+<p><img src="/2017/05/23/KVC探索与实践/1.jpg" alt=""></p>
+<ul>
+<li>左路径 (left key path):指向是集合类型的属性</li>
+<li>操作符 (colletion operator): 以‘@’开始</li>
+<li>右路径 (right key path):</li>
+</ul>
+<p><strong>操作符的种类：</strong></p>
+<ol>
+<li><strong>聚合操作符（Aggregation Operators）：</strong>返回单个值，比如<code>@count</code>、<code>@avg</code>、<code>@max</code>、<code>@min</code>、<code>@sum</code></li>
+<li><strong>数组操作符（Array Operators）：</strong>返回值是数组，比如<code>@distinctUnionOfObjects</code>、<code>@unionOfObjects</code>，两者区别是@distinctUnionOfObjects没有重复值</li>
+<li><p><strong>嵌入操作符（Nesting Operators）：</strong>返回值是NSArray或者NSSet,比如<code>@distinctUnionOfArrays</code>、<code>@unionOfArrays</code>、<code>@distinctUnionOfSets</code>。实例：</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">NSArray *arrayOne = @[.....];</span><br><span class="line">NSArray *arrayOther = @[.....];</span><br><span class="line">NSArray *concactArray = @[arrayOne, arrayOther];</span><br><span class="line"></span><br><span class="line">NSArray *collectedDistinctPayees = [concactArray valueForKeyPath:@&quot;@distinctUnionOfArrays.payee&quot;];</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p><br></p>
+<h3 id="非对象的数据"><a href="#非对象的数据" class="headerlink" title="非对象的数据"></a>非对象的数据</h3><p>基本的数据类型如<code>int</code>、<code>float</code>等，需要转换成<code>NSNumber</code>类型，<code>struct</code>需要转换成<code>NSValue</code>类型（针对Objective-C）</p>
+<p><br></p>
+<h3 id="键值验证（Validating-Properties）"><a href="#键值验证（Validating-Properties）" class="headerlink" title="键值验证（Validating Properties）"></a>键值验证（Validating Properties）</h3><p>KVC提供了可以检测设置的值的类型是否符合属性类型的要求的方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">- (BOOL)validateValue:(inout id _Nullable * _Nonnull)ioValue forKey:(NSString *)inKey error:(out NSError **)outError;</span><br><span class="line">- (BOOL)validateValue:(inout id _Nullable * _Nonnull)ioValue forKeyPath:(NSString *)inKeyPath error:(out NSError **)outError;</span><br></pre></td></tr></table></figure>
+<p>子类可以根据自己的校验逻辑重写这个方法。</p>
+<p><br></p>
+<h3 id="KVC设值和取值的流程"><a href="#KVC设值和取值的流程" class="headerlink" title="KVC设值和取值的流程"></a>KVC设值和取值的流程</h3><p><br></p>
+<h5 id="通过Getter获取值"><a href="#通过Getter获取值" class="headerlink" title="通过Getter获取值"></a>通过Getter获取值</h5><p>当调用方法<code>valueForKey:</code>时，按照以下流程处理：</p>
+<ol>
+<li>按照<code>get&lt;Key&gt;</code>, <code>&lt;key&gt;</code>, <code>is&lt;Key&gt;</code>, <code>_&lt;key&gt;</code>的顺序寻找方法，如果寻找到了，跳转到步骤5，否则进行步骤2。</li>
+<li>如果对象实现了<code>countOf&lt;Key&gt;</code>，同时实现了 <code>objectIn&lt;Key&gt;AtIndex:</code>，<code>&lt;key&gt;AtIndexes:</code> 其中的一个。对于方法 <code>get&lt;Key&gt;:range:</code>的是实现是<strong>可选</strong>的。如果实现了，那么就会生成一个集合代理对象（其实就是一个<code>NSMutatableArray</code>的子类<code>NSKeyValueMutableArray</code>），这个<code>集合代理对象</code>和<code>NSArray</code>的操作没什么区别。并返回这个集合代理对象。否则，进行步骤3。</li>
+<li>如果对象同时实现了<code>countOf&lt;Key&gt;</code>, <code>enumeratorOf&lt;Key&gt;,</code> and <code>memberOf&lt;Key&gt;:</code>那么就会生成一个集合代理对象（其实就是一个<code>NSSet</code>的子类<code>NSKeyValueSet</code>），这个<code>集合代理对象</code>和<code>NSSet</code>的操作没什么区别。并返回这个集合代理对象。否则，进行步骤4。</li>
+<li>查看对象的类方法 <code>accessInstanceVariablesDirectly</code> 返回的值是<code>YES</code>,那么按照顺序寻找实例变量<code>_&lt;key&gt;</code>, <code>_is&lt;Key&gt;</code>, <code>&lt;key&gt;</code>, 或者<code>is&lt;Key&gt;</code>,然后直接获取值，进行步骤5。否则进行步骤6。</li>
+<li>如果是<code>对象类型</code>，直接返回，如果是<code>int</code>、<code>struct</code>等数据类型封装成<code>NSNumber</code>或者<code>NSValue</code>。</li>
+<li>触发<code>valueForUndefinedKey</code>:方法，抛出异常。</li>
+</ol>
+<p><br></p>
+<h5 id="通过Setter设值"><a href="#通过Setter设值" class="headerlink" title="通过Setter设值"></a>通过Setter设值</h5><p>当调用方法<code>setValue:forKey:</code>时，按照以下流程处理：</p>
+<ol>
+<li>安装顺序寻找方法 <code>set&lt;Key&gt;:</code> ， <code>_set&lt;Key&gt;</code>，如果找到了把输入的值当做参数传入其中。</li>
+<li>查看对象的类方法 <code>accessInstanceVariablesDirectly</code> 返回的值是<code>YES</code>,那么按照顺序寻找实例变量<code>_&lt;key&gt;</code>, <code>_is&lt;Key&gt;</code>, <code>&lt;key&gt;</code>, 或者<code>is&lt;Key&gt;</code>,然后直接获赋值。</li>
+<li>触发<code>valueForUndefinedKey</code>:方法，抛出异常。</li>
+</ol>
+<p><br></p>
+<h5 id="返回可变数组-Mutable-Ordered-Sets"><a href="#返回可变数组-Mutable-Ordered-Sets" class="headerlink" title="返回可变数组/Mutable Ordered Sets"></a>返回可变数组/Mutable Ordered Sets</h5><p>当调用方法<code>mutableArrayValueForKey:</code>或者<code>mutableOrderedSetValueForKey:</code>时，按照以下流程处理：</p>
+<ol>
+<li><p>判断是否实现以下方法</p>
+ <figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这两个方法和 NSMutableArray/NSMutableOrderedSet 的方法 insertObject:atIndex: 和 removeObjectAtIndex: 对应</span></span><br><span class="line">insertObject:<span class="keyword">in</span>&lt;Key&gt;AtIndex:</span><br><span class="line">removeObjectFrom&lt;Key&gt;AtIndex:</span><br><span class="line"></span><br><span class="line"><span class="comment">// 这两个方法和 NSMutableArray/NSMutableOrderedSet 的方法 insertObjects:atIndexes: 和 removeObjectsAtIndexes: 对应</span></span><br><span class="line">insert&lt;Key&gt;:atIndexes: </span><br><span class="line">remove&lt;Key&gt;AtIndexes:</span><br></pre></td></tr></table></figure>
+<p>   中的一个<strong>插入</strong>和<strong>移除</strong>方法。如果实现了，那么就返回一个代理对象。否则进行步骤2。而对于方法</p>
+ <figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">replaceObjectIn&lt;Key&gt;AtIndex:withObject: </span><br><span class="line">    <span class="comment">//或者</span></span><br><span class="line">replace&lt;Key&gt;AtIndexes:with&lt;Key&gt;:</span><br></pre></td></tr></table></figure>
+<p> 可以增强效果。</p>
+</li>
+<li>寻找 <code>set&lt;Key&gt;:</code>方法。</li>
+<li>如果<code>array / mtuableOrderSet</code>的方法和 <code>set&lt;Key&gt;:</code>都没有寻找到。查看对象的类方法 <code>accessInstanceVariablesDirectly</code> 返回的值是<code>YES</code>,那么按照顺序寻找实例变量<code>_&lt;key&gt;</code>, <code>&lt;key&gt;</code>,如果找到了，会生成一个代理对象，这个对象会把NSMutableArray的方法发送给这个实例变量。</li>
+<li>触发<code>valueForUndefinedKey</code>:方法，抛出异常。</li>
+</ol>
+<p><br></p>
+<h5 id="返回mutableSet"><a href="#返回mutableSet" class="headerlink" title="返回mutableSet"></a>返回mutableSet</h5><p>当调用方法<code>mutableSetValueForKey:</code>时，按照以下流程处理：</p>
+<ol>
+<li><p>判断是否实现以下方法</p>
+ <figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这两个方法和  NSMutableSet 的方法  addObject: 和  removeObject: 对应</span></span><br><span class="line">add&lt;Key&gt;Object:</span><br><span class="line">remove&lt;Key&gt;Object:</span><br><span class="line"> </span><br><span class="line"><span class="comment">// 这两个方法和  NSMutableSet 的方法  unionSet: 和  minusSet: 对应</span></span><br><span class="line">add&lt;Key&gt;:</span><br><span class="line">remove&lt;Key&gt;:</span><br></pre></td></tr></table></figure>
+<p> 中的一个<strong>添加</strong>和<strong>移除</strong>方法。如果实现了，那么就返回一个代理对象。否则进行步骤2。而对于方法</p>
+ <figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">intersect&lt;Key&gt;:</span><br><span class="line">set&lt;Key&gt;:</span><br></pre></td></tr></table></figure>
+<p> 可以增强效果。</p>
+</li>
+<li><p>如果响应 <code>mutableSetValueForKey:</code>的对象是一个<code>managed object</code>（像<code>CoreData的Managed Object</code>）,查询将停止。</p>
+</li>
+<li>寻找 <code>set&lt;Key&gt;:</code>方法。</li>
+<li>如果<code>array / mtuableOrderSet</code>的方法和 <code>set&lt;Key&gt;:</code>都没有寻找到。查看对象的类方法 <code>accessInstanceVariablesDirectly</code> 返回的值是<code>YES</code>,那么按照顺序寻找实例变量<code>_&lt;key&gt;</code>, <code>&lt;key&gt;</code>,如果找到了，会生成一个代理对象，这个对象会把NSMutableArray的方法发送给这个实例变量。</li>
+<li>触发<code>valueForUndefinedKey</code>:方法，抛出异常。</li>
+</ol>
+<p><br><br>参考资料：</p>
+<ul>
+<li><a href="https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/KeyValueCoding/SearchImplementation.html#//apple_ref/doc/uid/20000955-CJBBBFFA" target="_blank" rel="noopener">Key-Value Coding Programming Guide</a></li>
+</ul>
+</div></article></div></main><footer><div class="paginator"><a href="/2017/04/12/KVO探索与实践/" class="next">NEXT</a></div><div class="copyright"><p>© 2015 - 2018 <a href="http://yoursite.com">John Doe</a>, powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/pinggod/hexo-theme-apollo" target="_blank">hexo-theme-apollo</a>.</p></div></footer></div><script async src="//cdn.bootcss.com/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML" integrity="sha384-crwIf/BuaWM9rM65iM+dWFldgQ1Un8jWZMuh3puxb8TOY9+linwLoI7ZHZT+aekW" crossorigin="anonymous"></script></body></html>
