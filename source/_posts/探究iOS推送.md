@@ -378,7 +378,7 @@ override var inputView: UIView? {
 刚开始发现loc-key和loc-args不起作用，多番查找之后才发现本地文件Localizable.strings没有关联到工程，所以导致无效。
 
 3. `thread_id`没有作用
-要想`thread_id`有作用，需要进行一些设置，在`手机设置--通知--显示预览`，当选择`解锁时`。试试吧。
+要想`thread_id`有作用，需要进行一些设置，在`手机设置--通知--显示预览`，选择`解锁时`。试试吧。
 
 
 
