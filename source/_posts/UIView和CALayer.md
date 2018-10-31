@@ -4,7 +4,6 @@ date: 2017-09-24 18:05:23
 tags:
 ---
 
-# UIView和CALayer
 > 在实际的开发经常使用`UIView`以及其子类和`CALayer`,或者设置`CALayer`的属性达到某些视觉效果。所以会有这样的疑惑：为什么要单独出一个`CALayer`呢？`CALayer`和`UIView`有什么区别呢？
 
 要想解决上述疑惑，我们先来讨论他们之间的联系和区别。
