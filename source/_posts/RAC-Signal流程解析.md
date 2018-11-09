@@ -190,6 +190,6 @@ RACSignal *signal = [RACSignal createSignal:^RACDisposable * _Nullable(id<RACSub
 最后`- (RACDisposable *)subscribe:(id<RACSubscriber>)subscriber`会把`self.didSubscribe(subscriber)`返回的`RACDisposable`加入到创建的`RACCompoundDisposable`实例disposable中去，并返回出去，订阅信号的地方就可以拿到这个`RACDisposable`，在以后有需要的情况下就可以取消订阅了。
 
 <div class="tip">
-    <div>1. 在创建信号或者变换信号（调用所有操作方法）的block里面，如果持有了持有信号的对象，就会导致循环引用。</div>
+    <div>1. 在创建信号或者变换信号（调用所有操作方法）的block里面，如果捕获了持有信号的对象，就会导致循环引用。</div>
     <div>2. 订阅的block里面不会引起循环引用。  </div>
 </div>
