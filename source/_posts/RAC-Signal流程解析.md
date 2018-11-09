@@ -132,8 +132,6 @@ RACSignal *signal = [RACSignal createSignal:^RACDisposable * _Nullable(id<RACSub
 
 回到上一个方法里面，把创建好的`RACPassthroughSubscriber`实例作为参数调用`self.didSubscribe(subscriber)`（这里可以看出在订阅的block里面不会有循环引用问题），这个就是创建步骤里面`RACDynamicSignal`的`_didSubscribe`变量，也就是`createSignal:`方法的block。在block里面会调用`RACPassthroughSubscriber`的`sendNext:`和`sendCompleted`方法，它在`RACPassthroughSubscriber`的实现是：
 ```objc
-```
-```objc
 - (void)sendNext:(id)value {
 	if (self.disposable.disposed) return;
 
